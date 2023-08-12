@@ -5,7 +5,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener{
@@ -17,7 +19,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 	Font smallerFont;
 	Timer frameDraw; 
 	Rocketship rocket = new Rocketship(250, 700, 50, 50);
+	ObjectManager om = new ObjectManager(rocket);
+	public static BufferedImage image;
+	public static boolean needImage = true;
+	public static boolean gotImage = false;	
+	
 	GamePanel(){
+		if (needImage) {
+		    loadImage ("space.png");
+		}
 		titleFont = new Font("Arial", Font.PLAIN, 48);
 		smallerFont = new Font("Arial", Font.PLAIN, 12);
 		frameDraw = new Timer(1000/60, this);
@@ -34,7 +44,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 		}
 	}
 	void updateMenuState() {  }
-	void updateGameState() {  }
+	void updateGameState() { om.update(); }
 	void updateEndState()  {  }
 	void drawMenuState(Graphics g) {
 		g.setColor(Color.BLUE);
@@ -47,9 +57,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 		g.drawString("Press SPACE for instructions", 163, 400);
 	}
 	void drawGameState(Graphics g) {
-		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, LeagueInvaders.WIDTH, LeagueInvaders.HEIGHT);
-		rocket.draw(g);
+		if (gotImage) {
+			g.drawImage(image, 0, 0, LeagueInvaders.WIDTH, LeagueInvaders.HEIGHT, null);
+		} else {
+			g.setColor(Color.BLUE);
+			g.fillRect(0, 0, LeagueInvaders.WIDTH, LeagueInvaders.HEIGHT);
+		}
+		om.draw(g);
 	}
 	void drawEndState(Graphics g)  {
 		g.setColor(Color.RED);
@@ -105,6 +119,17 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 			    }
 			}
 		}
+	}
+	void loadImage(String imageFile) {
+	    if (needImage) {
+	        try {
+	            image = ImageIO.read(this.getClass().getResourceAsStream(imageFile));
+		    gotImage = true;
+	        } catch (Exception e) {
+	            
+	        }
+	        needImage = false;
+	    }
 	}
 	@Override
 	public void keyReleased(KeyEvent arg0) {
