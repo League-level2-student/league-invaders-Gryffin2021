@@ -18,8 +18,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 	Font titleFont;
 	Font smallerFont;
 	Timer frameDraw; 
+	Timer alienSpawn;
 	Rocketship rocket = new Rocketship(250, 700, 50, 50);
-	ObjectManager om = new ObjectManager(rocket);
+	ObjectManager objectManager = new ObjectManager(rocket);
 	public static BufferedImage image;
 	public static boolean needImage = true;
 	public static boolean gotImage = false;	
@@ -44,7 +45,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 		}
 	}
 	void updateMenuState() {  }
-	void updateGameState() { om.update(); }
+	void updateGameState() { objectManager.update(); 
+	if(rocket.isActive == false) {
+		currentState = END;
+	}
+	}
 	void updateEndState()  {  }
 	void drawMenuState(Graphics g) {
 		g.setColor(Color.BLUE);
@@ -63,7 +68,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 			g.setColor(Color.BLUE);
 			g.fillRect(0, 0, LeagueInvaders.WIDTH, LeagueInvaders.HEIGHT);
 		}
-		om.draw(g);
+		objectManager.draw(g);
 	}
 	void drawEndState(Graphics g)  {
 		g.setColor(Color.RED);
@@ -71,6 +76,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 		g.setFont(titleFont);
 		g.setColor(Color.YELLOW);
 		g.drawString("GAME OVER", 85, 100);
+	}
+	
+	void startGame(){
+		alienSpawn = new Timer(1000 , objectManager);
+	    alienSpawn.start();
+	    if(currentState == END) {
+	    	alienSpawn.stop();
+	    }
 	}
 	
 	@Override
@@ -94,32 +107,39 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 		        currentState = MENU;
 		    } else {
 		        currentState++;
+		        startGame();
 		    }
 		}   
 		if(currentState == GAME) {
 			if (arg0.getKeyCode()==KeyEvent.VK_UP) {
 			    System.out.println("UP");
-			    if(Rocketship.y > 0) {
-			    	Rocketship.up();
+			    if(rocket.y > 0) {
+			    	rocket.up();
 			    }
 			}else if (arg0.getKeyCode()==KeyEvent.VK_DOWN) {
 			    System.out.println("DOWN");
-			    if(Rocketship.y < 720) {
-			    	Rocketship.down();
+			    if(rocket.y < 720) {
+			    	rocket.down();
 			    }
 			}else if (arg0.getKeyCode()==KeyEvent.VK_LEFT) {
 			    System.out.println("LEFT");
-			    if(Rocketship.x > 0) {
-			    	Rocketship.left();
+			    if(rocket.x > 0) {
+			    	rocket.left();
 			    }
 			}else if (arg0.getKeyCode()==KeyEvent.VK_RIGHT) {
 			    System.out.println("RIGHT");
-			    if(Rocketship.x < 450) {
-			    	Rocketship.right();
+			    if(rocket.x < 450) {
+			    	rocket.right();
 			    }
 			}
+			else if (arg0.getKeyCode()==KeyEvent.VK_SPACE) {
+				System.out.println("SPACE");
+				objectManager.addProjectile(rocket.getProjectile());
+			}
+			    
+			}
 		}
-	}
+	
 	void loadImage(String imageFile) {
 	    if (needImage) {
 	        try {

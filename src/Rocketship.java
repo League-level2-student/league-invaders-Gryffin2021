@@ -26,19 +26,24 @@ public class Rocketship extends GameObject {
         }
 	}
 	
-	public static void right() {
+	public Projectile getProjectile() {
+		System.out.println("getProjectile()");
+        return new Projectile(x+width/2, y, 10, 10);
+	} 
+	
+	public void right() {
         x+=speed;
     }
 	
-	public static void left() {
+	public void left() {
         x-=speed;
     }
 	
-	public static void down() {
+	public void down() {
         y+=speed;
     }
 	
-	public static void up() {
+	public void up() {
         y-=speed;
     }
 	
@@ -52,5 +57,6 @@ public class Rocketship extends GameObject {
 	        }
 	        needImage = false;
 	    }
+	    
 	}
 }
