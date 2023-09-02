@@ -23,7 +23,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 	ObjectManager objectManager = new ObjectManager(rocket);
 	public static BufferedImage image;
 	public static boolean needImage = true;
-	public static boolean gotImage = false;	
+	public static boolean gotImage = false;
+	public static boolean flawless = true;
+	
 	
 	GamePanel(){
 		if (needImage) {
@@ -64,6 +66,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 	void drawGameState(Graphics g) {
 		if (gotImage) {
 			g.drawImage(image, 0, 0, LeagueInvaders.WIDTH, LeagueInvaders.HEIGHT, null);
+			g.setFont(smallerFont);
+			g.setColor(Color.CYAN);
+			g.drawString(String.valueOf(ObjectManager.getScore()), 25, 25);
+			if(flawless == true) {
+				g.drawString("Flawless", 25, 40);
+			}
 		} else {
 			g.setColor(Color.BLUE);
 			g.fillRect(0, 0, LeagueInvaders.WIDTH, LeagueInvaders.HEIGHT);
@@ -83,6 +91,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 	    alienSpawn.start();
 	    if(currentState == END) {
 	    	alienSpawn.stop();
+	    	setScore(0);
 	    }
 	}
 	
@@ -103,43 +112,53 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		if (arg0.getKeyCode()==KeyEvent.VK_ENTER) {
+			setScore(0);
 		    if (currentState == END) {
 		        currentState = MENU;
+		        rocket = new Rocketship(250, 700, 50, 50);
+				objectManager = new ObjectManager(rocket);
+				flawless = true;
+				setScore(0);
 		    } else {
 		        currentState++;
+		        setScore(0);
 		        startGame();
 		    }
 		}   
 		if(currentState == GAME) {
 			if (arg0.getKeyCode()==KeyEvent.VK_UP) {
-			    System.out.println("UP");
+			    //System.out.println("UP");
 			    if(rocket.y > 0) {
 			    	rocket.up();
 			    }
 			}else if (arg0.getKeyCode()==KeyEvent.VK_DOWN) {
-			    System.out.println("DOWN");
+			    //System.out.println("DOWN");
 			    if(rocket.y < 720) {
 			    	rocket.down();
 			    }
 			}else if (arg0.getKeyCode()==KeyEvent.VK_LEFT) {
-			    System.out.println("LEFT");
+			    //System.out.println("LEFT");
 			    if(rocket.x > 0) {
 			    	rocket.left();
 			    }
 			}else if (arg0.getKeyCode()==KeyEvent.VK_RIGHT) {
-			    System.out.println("RIGHT");
+			    //System.out.println("RIGHT");
 			    if(rocket.x < 450) {
 			    	rocket.right();
 			    }
 			}
 			else if (arg0.getKeyCode()==KeyEvent.VK_SPACE) {
-				System.out.println("SPACE");
+				//System.out.println("SPACE");
 				objectManager.addProjectile(rocket.getProjectile());
 			}
 			    
 			}
 		}
 	
+	private void setScore(int i) {
+		// TODO Auto-generated method stub
+		
+	}
 	void loadImage(String imageFile) {
 	    if (needImage) {
 	        try {

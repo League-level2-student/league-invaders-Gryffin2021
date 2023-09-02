@@ -9,6 +9,8 @@ public class ObjectManager implements ActionListener {
 	ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 	ArrayList<Alien> aliens = new ArrayList<Alien>();
 	Random random = new Random();
+	private static int score = 0;
+	
 
 	ObjectManager(Rocketship rocketship) {
 		this.rocketship = rocketship;
@@ -27,21 +29,26 @@ public class ObjectManager implements ActionListener {
 			if(rocketship.collisionBox.intersects(aliens.get(i).collisionBox)) {
 				rocketship.isActive = false;
 				aliens.get(i).isActive = false;
+				setScore(0);
 			}
 			for(int i1 = 0; i1 < projectiles.size(); i1++) {
-				if(projectiles.get(i).collisionBox.intersects(aliens.get(i1).collisionBox)) {
-				projectiles.get(i).isActive = false;
+				if(projectiles.get(i1).collisionBox.intersects(aliens.get(i).collisionBox)) {
+				projectiles.get(i1).isActive = false;
 				aliens.get(i).isActive = false;
+				setScore(getScore() +1);
 				}
 			}
 		}
 	}
 
 	void update() {
+		checkCollision();
 		for (int i = 0; i < aliens.size(); i++) {
 			aliens.get(i).update();
+			if (aliens.get(i).x > 490)
 			if (aliens.get(i).y > LeagueInvaders.HEIGHT) {
 				aliens.get(i).isActive = false;
+				GamePanel.flawless = false;
 			}
 			for (int i1 = 0; i1 < projectiles.size(); i1++) {
 				projectiles.get(i1).update();
@@ -50,7 +57,7 @@ public class ObjectManager implements ActionListener {
 				}
 			}
 		}
-		checkCollision();
+		rocketship.update();
 		purgeObjects();
 	}
 
@@ -74,7 +81,7 @@ public class ObjectManager implements ActionListener {
 
 			for (int i1 = 0; i1 < projectiles.size(); i1++) {
 				if (projectiles.get(i1).isActive == false) {
-					projectiles.remove(projectiles.get(i));
+					projectiles.remove(projectiles.get(i1));
 				}
 			}
 		}
@@ -84,5 +91,13 @@ public class ObjectManager implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 		addAliens();
+	}
+
+	public static int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
 	}
 }
